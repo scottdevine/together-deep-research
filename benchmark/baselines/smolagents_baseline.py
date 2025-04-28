@@ -44,7 +44,7 @@ class SmolAgentsTavilySearchTool(Tool):
 if __name__ == "__main__":
     from smolagents import CodeAgent, LiteLLMModel
 
-    model = LiteLLMModel(model_id="together_ai/meta-llama/Llama-3.3-70B-Instruct-Turbo",
+    model = LiteLLMModel(model_id="meta-llama/Llama-3.3-70B-Instruct-Turbo",
                          api_key=os.environ["TOGETHER_API_KEY"])
     agent = CodeAgent(tools=[SmolAgentsTavilySearchTool()], model=model)
 

@@ -55,11 +55,11 @@ def create_agent(config: str, return_instance: bool = False) -> Any:
 
                         2. Main Body Sections:
                         - Each section should focus on a sub-topic of the user-provided topic
-                        
+
                         3. Conclusion
-                        - Aim for 1 structural element (either a list of table) that distills the main body sections 
+                        - Aim for 1 structural element (either a list of table) that distills the main body sections
                         - Provide a concise summary of the report"""
-        
+
         # Extract configuration parameters
         search_api = agent_config.get("search_api", "tavily")
         planner_provider = agent_config.get("planner_provider")
@@ -67,10 +67,10 @@ def create_agent(config: str, return_instance: bool = False) -> Any:
         writer_provider = agent_config.get("writer_provider")
         writer_model = agent_config.get("writer_model")
         max_search_depth = agent_config.get("max_search_depth", 3)
-        
+
         def langchain_wrapper(goal: str):
             import asyncio
-            
+
             thread = {
                 "configurable": {
                     "thread_id": str(uuid.uuid4()),
@@ -86,24 +86,24 @@ def create_agent(config: str, return_instance: bool = False) -> Any:
 
             # NOTE: add research prompt to the goal for robust benchmarking purposes
             goal=goal + " You must perform in-depth research to answer the question."
-            
+
             results = []
-            
+
             async def run_graph():
                 async for event in graph.astream({"topic": goal}, thread, stream_mode="updates"):
                     results.append(event)
-                
+
                 from langgraph.types import Command
                 async for event in graph.astream(Command(resume=True), thread, stream_mode="updates"):
                     results.append(event)
 
                 final_state = graph.get_state(thread)
                 report = final_state.values.get('final_report')
-                
+
                 return report
-            
+
             return asyncio.run(run_graph())
-        
+
         return langchain_wrapper
 
     elif agent_type == "base_llm":
@@ -137,7 +137,7 @@ def create_agent(config: str, return_instance: bool = False) -> Any:
             )
 
         model_id = agent_config.get(
-            "model", "together_ai/meta-llama/Llama-3.3-70B-Instruct-Turbo")
+            "model", "meta-llama/Llama-3.3-70B-Instruct-Turbo")
 
         import os
 

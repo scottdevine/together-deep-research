@@ -12,12 +12,12 @@ from typing import Callable, List
 import yaml
 from dotenv import load_dotenv
 from filelock import FileLock
-from libs.utils.data_types import DeepResearchResult, DeepResearchResults, ResearchPlan, SourceList, UserCommunication
-from libs.utils.generation import generate_pdf, save_and_generate_html
-from libs.utils.llms import asingle_shot_llm_call, generate_toc_image
-from libs.utils.log import AgentLogger
-from libs.utils.podcast import generate_podcast_audio, generate_podcast_script, get_base64_audio, save_podcast_to_disk
-from libs.utils.tavily_search import atavily_search_results
+from src.libs.utils.data_types import DeepResearchResult, DeepResearchResults, ResearchPlan, SourceList, UserCommunication
+from src.libs.utils.generation import generate_pdf, save_and_generate_html
+from src.libs.utils.llms import asingle_shot_llm_call, generate_toc_image
+from src.libs.utils.log import AgentLogger
+from src.libs.utils.podcast import generate_podcast_audio, generate_podcast_script, get_base64_audio, save_podcast_to_disk
+from src.libs.utils.tavily_search import atavily_search_results
 
 logging = AgentLogger("together.open_deep_research")
 
@@ -34,10 +34,10 @@ class DeepResearcher:
         max_completion_tokens: int = 4096,
         user_timeout: float = 30.0,
         interactive: bool = False,
-        planning_model: str = "together_ai/meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
-        summarization_model: str = "together_ai/meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
-        json_model: str = "together_ai/meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
-        answer_model: str = "together_ai/deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
+        planning_model: str = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+        summarization_model: str = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+        json_model: str = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+        answer_model: str = "deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
         debug_file_path: str | None = None,
         cache_dir: str | None = None,
         use_cache: bool = False,
@@ -529,7 +529,7 @@ class DeepResearcher:
 
 
 def main():
-    from libs.utils.agent_factory import create_agent
+    from src.libs.utils.agent_factory import create_agent
 
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Deep Research Tool")
@@ -573,7 +573,7 @@ def main():
     if args.add_toc_image:
         # Use the instance's prompts
         toc_image_url = generate_toc_image(
-            researcher_instance.prompts["data_visualization_prompt"], "together_ai/deepseek-ai/DeepSeek-V3", topic
+            researcher_instance.prompts["data_visualization_prompt"], "deepseek-ai/DeepSeek-V3", topic
         )
         logging.info(f"Table of contents image generated: {toc_image_url}")
 

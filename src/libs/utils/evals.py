@@ -33,14 +33,14 @@ def llm_as_a_judge_scoring(result: Result) -> bool:
     </correct_answer>
 
     Note that the agent answer might be a long text containing a lot of information or it might be a short answer.
-    
+
     You should read the entire text and think if the agent answers the question somewhere
-    in the text. You should try to be flexible with the answer but careful. 
-    
+    in the text. You should try to be flexible with the answer but careful.
+
     For example, answering with names instead of name and surname is fine.
 
     The important thing is that the answer of the agent either contains the correct answer or is equal to the correct answer.
-    
+
     <reasoning>
     The agent answer is correct because I can read that ....
     </reasoning>
@@ -67,7 +67,7 @@ def llm_as_a_judge_scoring(result: Result) -> bool:
     ]
     answer = (
         completion(
-            model="together_ai/meta-llama/Llama-3.3-70B-Instruct-Turbo",
+            model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
             messages=messages,
             max_tokens=1000,
             temperature=0.0,

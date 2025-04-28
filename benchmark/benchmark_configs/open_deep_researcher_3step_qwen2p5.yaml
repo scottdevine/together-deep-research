@@ -9,7 +9,7 @@ agent:
   use_cache: true
   remove_thinking_tags: true
   debug_file_path: ""
-  planning_model: "together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo"
-  summarization_model: "together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo"
-  json_model: "together_ai/meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
-  answer_model:  "together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo"
+  planning_model: "Qwen/Qwen2.5-72B-Instruct-Turbo"
+  summarization_model: "Qwen/Qwen2.5-72B-Instruct-Turbo"
+  json_model: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+  answer_model:  "Qwen/Qwen2.5-72B-Instruct-Turbo"

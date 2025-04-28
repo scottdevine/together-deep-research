@@ -1,7 +1,8 @@
 from typing import Any, Optional
+import json
+import os
 
 import tenacity
-from litellm import acompletion, completion
 from together import Together
 
 
@@ -13,18 +14,41 @@ async def asingle_shot_llm_call(
     response_format: Optional[dict[str, str | dict[str, Any]]] = None,
     max_completion_tokens: int | None = None,
 ) -> str:
-    response = await acompletion(
-        model=model,
-        messages=[{"role": "system", "content": system_prompt},
-                  {"role": "user", "content": message}],
+    # Use the Together API directly instead of litellm
+    # This avoids the provider format issues with litellm
+    # Note: Together API doesn't support async operations, so we use the synchronous API
+    client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
+
+    # Check if response_format is specified
+    if response_format is not None and response_format.get("type") == "json_object" and "schema" in response_format:
+        # For Together AI models, we need to handle JSON formatting differently
+        # Add instructions to the system prompt instead
+        schema_str = json.dumps(response_format["schema"], indent=2)
+        enhanced_system_prompt = f"{system_prompt}\n\nYour response must be a valid JSON object that conforms to this schema:\n{schema_str}\n\nEnsure your response is properly formatted JSON with no additional text."
+
+        # Call the Together API directly (synchronously)
+        response = client.chat.completions.create(
+            model=model,  # Use the model name directly
+            messages=[
+                {"role": "system", "content": enhanced_system_prompt},
+                {"role": "user", "content": message}
+            ],
+            temperature=0.0,
+            max_tokens=max_completion_tokens if max_completion_tokens else 1024
+        )
+        return response.choices[0].message.content
+
+    # For when no response_format is specified
+    response = client.chat.completions.create(
+        model=model,  # Use the model name directly
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": message}
+        ],
         temperature=0.0,
-        response_format=response_format,
-        # NOTE: max_token is deprecated per OpenAI API docs, use max_completion_tokens instead if possible
-        # NOTE: max_completion_tokens is not currently supported by Together AI, so we use max_tokens instead
-        max_tokens=max_completion_tokens,
-        timeout=600,
+        max_tokens=max_completion_tokens if max_completion_tokens else 1024
     )
-    return response.choices[0].message["content"]  # type: ignore
+    return response.choices[0].message.content
 
 
 @tenacity.retry(stop=tenacity.stop_after_attempt(3), wait=tenacity.wait_exponential(multiplier=1, min=4, max=15))
@@ -35,18 +59,40 @@ def single_shot_llm_call(
     response_format: Optional[dict[str, str | dict[str, Any]]] = None,
     max_completion_tokens: int | None = None,
 ) -> str:
-    response = completion(
-        model=model,
-        messages=[{"role": "system", "content": system_prompt},
-                  {"role": "user", "content": message}],
+    # Use the Together API directly instead of litellm
+    # This avoids the provider format issues with litellm
+    client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
+
+    # Check if response_format is specified
+    if response_format is not None and response_format.get("type") == "json_object" and "schema" in response_format:
+        # For Together AI models, we need to handle JSON formatting differently
+        # Add instructions to the system prompt instead
+        schema_str = json.dumps(response_format["schema"], indent=2)
+        enhanced_system_prompt = f"{system_prompt}\n\nYour response must be a valid JSON object that conforms to this schema:\n{schema_str}\n\nEnsure your response is properly formatted JSON with no additional text."
+
+        # Call the Together API directly
+        response = client.chat.completions.create(
+            model=model,  # Use the model name directly
+            messages=[
+                {"role": "system", "content": enhanced_system_prompt},
+                {"role": "user", "content": message}
+            ],
+            temperature=0.0,
+            max_tokens=max_completion_tokens if max_completion_tokens else 1024
+        )
+        return response.choices[0].message.content
+
+    # For when no response_format is specified
+    response = client.chat.completions.create(
+        model=model,  # Use the model name directly
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": message}
+        ],
         temperature=0.0,
-        response_format=response_format,
-        # NOTE: max_token is deprecated per OpenAI API docs, use max_completion_tokens instead if possible
-        # NOTE: max_completion_tokens is not currently supported by Together AI, so we use max_tokens instead
-        max_tokens=max_completion_tokens,
-        timeout=600,
+        max_tokens=max_completion_tokens if max_completion_tokens else 1024
     )
-    return response.choices[0].message["content"]  # type: ignore
+    return response.choices[0].message.content
 
 
 

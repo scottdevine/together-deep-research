@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, Field
 
-from libs.utils.tavily_search import SearchResult, SearchResults
+from src.libs.utils.tavily_search import SearchResult, SearchResults
 
 
 class ResearchPlan(BaseModel):

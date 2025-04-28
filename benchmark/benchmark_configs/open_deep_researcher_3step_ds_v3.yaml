@@ -9,7 +9,7 @@ agent:
   use_cache: true
   remove_thinking_tags: true
   debug_file_path: ""
-  planning_model: "together_ai/deepseek-ai/DeepSeek-V3"
-  summarization_model: "together_ai/deepseek-ai/DeepSeek-V3"
-  json_model: "together_ai/meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
-  answer_model:  "together_ai/deepseek-ai/DeepSeek-V3"
+  planning_model: "deepseek-ai/DeepSeek-V3"
+  summarization_model: "deepseek-ai/DeepSeek-V3"
+  json_model: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+  answer_model:  "deepseek-ai/DeepSeek-V3"

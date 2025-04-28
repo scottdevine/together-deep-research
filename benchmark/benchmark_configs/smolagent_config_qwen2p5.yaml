@@ -1,6 +1,6 @@
 agent:
   type: smolagents
-  model: together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo
+  model: Qwen/Qwen2.5-72B-Instruct-Turbo
   tools:
     - TavilySearch:
         params:
